@@ -4144,6 +4144,29 @@ describe('BrowserWindow module', () => {
       });
     });
 
+    ifdescribe(process.platform === 'darwin')('canHide state', () => {
+      it('with properties', () => {
+        it('is true by default', () => {
+          const w = new BrowserWindow();
+          app.hide();
+          expect(w.isVisible()).to.be.false();
+        });
+
+        it('can be set with a constructor property', () => {
+          const w = new BrowserWindow({ canHide: false });
+          app.hide();
+          expect(w.isVisible()).to.be.true();
+        });
+
+        it('can be changed ', async () => {
+          const w = new BrowserWindow({ canHide: false });
+          w.setCanHide(true);
+          app.hide();
+          expect(w.isVisible()).to.be.false();
+        });
+      });
+    });
+
     ifdescribe(process.platform === 'darwin')('fullscreen state with resizable set', () => {
       it('resizable flag should be set to true and restored', async () => {
         const w = new BrowserWindow({ resizable: false });

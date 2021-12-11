@@ -33,6 +33,7 @@ extern const char kClosable[];
 extern const char kFullscreen[];
 extern const char kSkipTaskbar[];
 extern const char kKiosk[];
+extern const char kCanHide[];
 extern const char kSimpleFullScreen[];
 extern const char kAlwaysOnTop[];
 extern const char kAcceptFirstMouse[];

@@ -638,6 +638,10 @@ bool BaseWindow::IsKiosk() {
   return window_->IsKiosk();
 }
 
+void BaseWindow::SetCanHide(bool canHide) {
+  window_->SetCanHide(canHide);
+}
+
 bool BaseWindow::IsTabletMode() const {
   return window_->IsTabletMode();
 }
@@ -1235,6 +1239,7 @@ void BaseWindow::BuildPrototype(v8::Isolate* isolate,
       .SetMethod("isSimpleFullScreen", &BaseWindow::IsSimpleFullScreen)
       .SetMethod("setKiosk", &BaseWindow::SetKiosk)
       .SetMethod("isKiosk", &BaseWindow::IsKiosk)
+      .SetMethod("setCanHide", &BaseWindow::SetCanHide)
       .SetMethod("isTabletMode", &BaseWindow::IsTabletMode)
       .SetMethod("setBackgroundColor", &BaseWindow::SetBackgroundColor)
       .SetMethod("getBackgroundColor", &BaseWindow::GetBackgroundColor)

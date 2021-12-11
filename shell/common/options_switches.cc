@@ -43,6 +43,9 @@ const char kSkipTaskbar[] = "skipTaskbar";
 // http://www.opera.com/support/mastering/kiosk/
 const char kKiosk[] = "kiosk";
 
+// Whether window hides when the application does on macOS
+const char kCanHide[] = "canHide";
+
 const char kSimpleFullScreen[] = "simpleFullscreen";
 
 // Make windows stays on the top of all other windows.

@@ -199,6 +199,12 @@ void NativeWindow::InitFromOptions(const gin_helper::Dictionary& options) {
     SetKiosk(kiosk);
   }
 #if defined(OS_MAC)
+  bool canHide;
+  if (options.Get(options::kCanHide, &canHide)) {
+    SetCanHide(canHide);
+  }
+#endif
+#if defined(OS_MAC)
   std::string type;
   if (options.Get(options::kVibrancyType, &type)) {
     SetVibrancy(type);
@@ -394,6 +400,8 @@ void NativeWindow::ToggleTabBar() {}
 bool NativeWindow::AddTabbedWindow(NativeWindow* window) {
   return true;  // for non-Mac platforms
 }
+
+void NativeWindow::SetCanHide(bool canHide) {}
 
 void NativeWindow::SetVibrancy(const std::string& type) {}
 

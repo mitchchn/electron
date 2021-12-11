@@ -177,6 +177,7 @@ It creates a new `BrowserWindow` with native properties as set by the `options`.
   * `skipTaskbar` boolean (optional) - Whether to show the window in taskbar. Default is
     `false`.
   * `kiosk` boolean (optional) - Whether the window is in kiosk mode. Default is `false`.
+  * `canHide` boolean (optional) - Whether the window hides when the application hides on macOS. Default is `true`.
   * `title` string (optional) - Default window title. Default is `"Electron"`. If the HTML tag `<title>` is defined in the HTML file loaded by `loadURL()`, this property will be ignored.
   * `icon` ([NativeImage](native-image.md) | string) (optional) - The window icon. On Windows it is
     recommended to use `ICO` icons to get best visual effects, you can also
@@ -1290,6 +1291,12 @@ Enters or leaves kiosk mode.
 #### `win.isKiosk()`
 
 Returns `boolean` - Whether the window is in kiosk mode.
+
+#### `win.setCanHide(canHide)` _macOS_
+
+* `canHide` boolean
+
+Sets whether the window hides when the application hides.
 
 #### `win.isTabletMode()` _Windows_
 

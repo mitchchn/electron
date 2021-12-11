@@ -1091,6 +1091,10 @@ bool NativeWindowMac::IsKiosk() {
   return is_kiosk_;
 }
 
+void NativeWindowMac::SetCanHide(bool canHide) {
+  [window_ setCanHide:canHide];
+}
+
 void NativeWindowMac::SetBackgroundColor(SkColor color) {
   base::ScopedCFTypeRef<CGColorRef> cgcolor(
       skia::CGColorCreateFromSkColor(color));

@@ -92,6 +92,7 @@ class NativeWindowMac : public NativeWindow,
   bool IsSimpleFullScreen() override;
   void SetKiosk(bool kiosk) override;
   bool IsKiosk() override;
+  void SetCanHide(bool canHide) override;
   void SetBackgroundColor(SkColor color) override;
   SkColor GetBackgroundColor() override;
   void SetHasShadow(bool has_shadow) override;
