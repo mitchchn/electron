@@ -38,7 +38,7 @@ class GlobalMenuBarX11;
 class LinuxFrameLayout;
 #endif
 
-#if BUILDFLAG(IS_OZONE_X11)
+#if BUILDFLAG(SUPPORTS_OZONE_X11)
 class EventDisabler;
 #endif
 
@@ -50,7 +50,8 @@ class NativeWindowViews : public NativeWindow,
                           private views::WidgetObserver,
                           private ui::EventHandler {
  public:
-  NativeWindowViews(const gin_helper::Dictionary& options,
+  NativeWindowViews(int32_t base_window_id,
+                    const gin_helper::Dictionary& options,
                     NativeWindow* parent);
   ~NativeWindowViews() override;
 
@@ -160,8 +161,8 @@ class NativeWindowViews : public NativeWindow,
   // Translates between logical/opaque window bounds exposed to callers
   // and the absolute bounds of the underlying widget, which can be larger to
   // fit CSD, e.g. transparent outer regions for shadows and resize targets.
-  virtual gfx::Rect LogicalToWidgetBounds(const gfx::Rect& bounds) const;
-  virtual gfx::Rect WidgetToLogicalBounds(const gfx::Rect& bounds) const;
+  gfx::Rect LogicalToWidgetBounds(const gfx::Rect& bounds) const;
+  gfx::Rect WidgetToLogicalBounds(const gfx::Rect& bounds) const;
 
   void IncrementChildModals();
   void DecrementChildModals();
@@ -280,7 +281,7 @@ class NativeWindowViews : public NativeWindow,
   std::unique_ptr<GlobalMenuBarX11> global_menu_bar_;
 #endif
 
-#if BUILDFLAG(IS_OZONE_X11)
+#if BUILDFLAG(SUPPORTS_OZONE_X11)
   // To disable the mouse events.
   std::unique_ptr<EventDisabler> event_disabler_;
 #endif

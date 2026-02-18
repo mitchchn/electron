@@ -5,7 +5,7 @@
 // FIXME(ckerr) this incorrect #include order is a temporary
 // fix to unblock the roll. Will fix in an upgrade followup.
 #include "ui/base/ozone_buildflags.h"
-#if BUILDFLAG(IS_OZONE_X11)
+#if BUILDFLAG(SUPPORTS_OZONE_X11)
 #include "ui/base/x/x11_util.h"
 #endif
 
@@ -72,7 +72,7 @@
 #include "ui/views/widget/desktop_aura/desktop_native_widget_aura.h"
 #include "ui/views/window/native_frame_view.h"
 
-#if BUILDFLAG(IS_OZONE_X11)
+#if BUILDFLAG(SUPPORTS_OZONE_X11)
 #include "shell/browser/ui/views/global_menu_bar_x11.h"
 #include "shell/browser/ui/x/event_disabler.h"
 #include "shell/browser/ui/x/x_window_utils.h"
@@ -200,9 +200,10 @@ class NativeWindowClientView : public views::ClientView {
 
 }  // namespace
 
-NativeWindowViews::NativeWindowViews(const gin_helper::Dictionary& options,
+NativeWindowViews::NativeWindowViews(const int32_t base_window_id,
+                                     const gin_helper::Dictionary& options,
                                      NativeWindow* parent)
-    : NativeWindow(options, parent) {
+    : NativeWindow{base_window_id, options, parent} {
   if (std::string val; options.Get(options::kTitle, &val))
     SetTitle(val);
 
@@ -1684,11 +1685,10 @@ gfx::Rect NativeWindowViews::LogicalToWidgetBounds(
     const gfx::Rect& bounds) const {
   gfx::Rect widget_bounds(bounds);
   const gfx::Insets frame_insets = GetRestoredFrameBorderInsets();
-  if (!frame_insets.IsEmpty()) {
-    widget_bounds.Outset(
-        gfx::Outsets::TLBR(frame_insets.top(), frame_insets.left(),
-                           frame_insets.bottom(), frame_insets.right()));
-  }
+  widget_bounds.Outset(
+      gfx::Outsets::TLBR(frame_insets.top(), frame_insets.left(),
+                         frame_insets.bottom(), frame_insets.right()));
+
   return widget_bounds;
 }
 
@@ -1705,17 +1705,16 @@ gfx::Rect NativeWindowViews::ContentBoundsToWindowBounds(
     return bounds;
 
   gfx::Rect window_bounds(bounds);
-  if (widget()->non_client_view()) {
+
+  if (auto* ncv = widget()->non_client_view()) {
 #if BUILDFLAG(IS_WIN)
     HWND hwnd = GetAcceleratedWidget();
     gfx::Rect dpi_bounds = DIPToScreenRect(hwnd, bounds);
-    window_bounds = ScreenToDIPRect(
-        hwnd, widget()->non_client_view()->GetWindowBoundsForClientBounds(
-                  dpi_bounds));
+    window_bounds =
+        ScreenToDIPRect(hwnd, ncv->GetWindowBoundsForClientBounds(dpi_bounds));
 #else
     window_bounds = WidgetToLogicalBounds(
-        widget()->non_client_view()->GetWindowBoundsForClientBounds(
-            window_bounds));
+        ncv->GetWindowBoundsForClientBounds(window_bounds));
 #endif
   }
 
@@ -2014,9 +2013,10 @@ void NativeWindowViews::MoveBehindTaskBarIfNeeded() {
 
 // static
 std::unique_ptr<NativeWindow> NativeWindow::Create(
+    const int32_t base_window_id,
     const gin_helper::Dictionary& options,
     NativeWindow* parent) {
-  return std::make_unique<NativeWindowViews>(options, parent);
+  return std::make_unique<NativeWindowViews>(base_window_id, options, parent);
 }
 
 }  // namespace electron

@@ -18,7 +18,7 @@
 #include "ui/linux/linux_ui.h"
 #include "ui/linux/window_frame_provider.h"
 
-#if BUILDFLAG(IS_OZONE_X11)
+#if BUILDFLAG(SUPPORTS_OZONE_X11)
 #include "shell/browser/linux/x11_util.h"
 #endif
 

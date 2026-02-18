@@ -11,10 +11,10 @@ For resolving complex conflict please pin @reitowo
 For more reason please see: https://crrev.com/c/5465148
 
 diff --git a/gpu/command_buffer/service/shared_image/d3d_image_backing_factory.cc b/gpu/command_buffer/service/shared_image/d3d_image_backing_factory.cc
-index f0495805b90386588abaec45ff39c33753efe6f5..b14a585aba0d75f59a980bc6c045ea4d7ce5b4c7 100644
+index 660a50670db25c48bdb7ab9facd8efbe944844f1..904ae1ef29aae9a28b555acc71928450ea848588 100644
 --- a/gpu/command_buffer/service/shared_image/d3d_image_backing_factory.cc
 +++ b/gpu/command_buffer/service/shared_image/d3d_image_backing_factory.cc
-@@ -381,7 +381,8 @@ gfx::GpuMemoryBufferHandle D3DImageBackingFactory::CreateGpuMemoryBufferHandle(
+@@ -378,7 +378,8 @@ gfx::GpuMemoryBufferHandle D3DImageBackingFactory::CreateGpuMemoryBufferHandle(
    // so make sure that the usage is one that we support.
    DCHECK(usage == gfx::BufferUsage::GPU_READ ||
           usage == gfx::BufferUsage::SCANOUT ||
@@ -24,7 +24,7 @@ index f0495805b90386588abaec45ff39c33753efe6f5..b14a585aba0d75f59a980bc6c045ea4d
        << "Incorrect usage, usage=" << gfx::BufferUsageToString(usage);
  
    D3D11_TEXTURE2D_DESC desc = {
-@@ -395,7 +396,9 @@ gfx::GpuMemoryBufferHandle D3DImageBackingFactory::CreateGpuMemoryBufferHandle(
+@@ -392,7 +393,9 @@ gfx::GpuMemoryBufferHandle D3DImageBackingFactory::CreateGpuMemoryBufferHandle(
        D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET,
        0,
        D3D11_RESOURCE_MISC_SHARED_NTHANDLE |
@@ -35,11 +35,11 @@ index f0495805b90386588abaec45ff39c33753efe6f5..b14a585aba0d75f59a980bc6c045ea4d
  
    Microsoft::WRL::ComPtr<ID3D11Texture2D> d3d11_texture;
  
-diff --git a/media/video/renderable_gpu_memory_buffer_video_frame_pool.cc b/media/video/renderable_gpu_memory_buffer_video_frame_pool.cc
-index 18db1791d2ea8ca975b19c1dd6b6716222714b82..7befad5fa30d037227c1955544f19fbb5756f83d 100644
---- a/media/video/renderable_gpu_memory_buffer_video_frame_pool.cc
-+++ b/media/video/renderable_gpu_memory_buffer_video_frame_pool.cc
-@@ -209,6 +209,23 @@ bool FrameResources::Initialize(VideoPixelFormat format,
+diff --git a/media/video/renderable_mappable_shared_image_video_frame_pool.cc b/media/video/renderable_mappable_shared_image_video_frame_pool.cc
+index 36ed797edc58a6cf094a0b720bf949b3f6379890..950b839a67fc190f9c0d73bcc102b547178216bb 100644
+--- a/media/video/renderable_mappable_shared_image_video_frame_pool.cc
++++ b/media/video/renderable_mappable_shared_image_video_frame_pool.cc
+@@ -211,6 +211,23 @@ bool FrameResources::Initialize(VideoPixelFormat format,
    const gfx::Size coded_size =
        GetCodedSizeForVideoPixelFormat(format, visible_size_);
  
