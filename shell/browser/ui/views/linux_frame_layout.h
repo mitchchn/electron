@@ -9,6 +9,7 @@
 #include <memory>
 
 #include "base/i18n/rtl.h"
+#include "shell/browser/linux/x11_util.h"
 #include "shell/browser/native_window_views.h"
 #include "shell/browser/ui/electron_desktop_window_tree_host_linux.h"
 #include "third_party/skia/include/core/SkRRect.h"
@@ -17,10 +18,6 @@
 #include "ui/gfx/geometry/insets.h"
 #include "ui/linux/linux_ui.h"
 #include "ui/linux/window_frame_provider.h"
-
-#if BUILDFLAG(SUPPORTS_OZONE_X11)
-#include "shell/browser/linux/x11_util.h"
-#endif
 
 namespace electron {
 

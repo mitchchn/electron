@@ -1934,13 +1934,8 @@ std::unique_ptr<views::FrameView> NativeWindowViews::CreateFrameView(
 
 #if BUILDFLAG(IS_LINUX)
 LinuxFrameLayout* NativeWindowViews::GetLinuxFrameLayout() {
-  // Windows with real frames (server-side decorations) do not have a CSD
-  // layout.
-  if (has_frame() && !has_client_frame())
-    return {};
-
-  auto* view =
-      static_cast<FramelessView*>(widget()->non_client_view()->frame_view());
+  auto* view = views::AsViewClass<FramelessView>(
+      widget()->non_client_view()->frame_view());
   return view ? view->GetLinuxFrameLayout() : nullptr;
 }
 #endif
