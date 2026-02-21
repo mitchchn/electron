@@ -271,13 +271,13 @@ class NativeWindowViews : public NativeWindow,
   // The view should be focused by default.
   raw_ptr<views::View> focused_view_ = nullptr;
 
+#if BUILDFLAG(IS_LINUX)
   // The "resizable" flag on Linux is implemented by setting size constraints,
   // we need to make sure size constraints are restored when window becomes
   // resizable again. This is also used on Windows, to keep taskbar resize
   // events from resizing the window.
   extensions::SizeConstraints old_size_constraints_;
 
-#if BUILDFLAG(IS_LINUX)
   std::unique_ptr<GlobalMenuBarX11> global_menu_bar_;
 #endif
 

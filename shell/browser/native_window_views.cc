@@ -931,8 +931,10 @@ void NativeWindowViews::SetContentSizeConstraints(
   // of this to determine whether native widget has initialized.
   if (widget() && widget()->widget_delegate())
     widget()->OnSizeConstraintsChanged();
+#if BUILDFLAG(IS_LINUX)
   if (resizable_)
-    old_size_constraints_ = size_constraints;
+    old_size_constraints_ = GetSizeConstraints();
+#endif
 }
 
 #if BUILDFLAG(IS_WIN)
@@ -961,17 +963,19 @@ extensions::SizeConstraints NativeWindowViews::GetContentSizeConstraints()
 void NativeWindowViews::SetResizable(bool resizable) {
   if (resizable != resizable_) {
     resizable_ = resizable;
+#if BUILDFLAG(IS_LINUX)
     // On Linux there is no "resizable" property of a window, we have to set
     // both the minimum and maximum size to the window size to achieve it.
     if (resizable) {
-      SetContentSizeConstraints(old_size_constraints_);
+      SetSizeConstraints(old_size_constraints_);
     } else {
-      old_size_constraints_ = GetContentSizeConstraints();
-      gfx::Size content_size = GetContentSize();
-      SetContentSizeConstraints(
-          extensions::SizeConstraints(content_size, content_size));
+      old_size_constraints_ = GetSizeConstraints();
+      gfx::Size window_size = GetSize();
+      SetSizeConstraints(extensions::SizeConstraints(window_size, window_size));
     }
-#if BUILDFLAG(IS_WIN)
+    if (widget() && widget()->widget_delegate())
+      widget()->OnSizeConstraintsChanged();
+#elif BUILDFLAG(IS_WIN)
     UpdateThickFrame();
 #endif
   }
@@ -1934,8 +1938,10 @@ std::unique_ptr<views::FrameView> NativeWindowViews::CreateFrameView(
 
 #if BUILDFLAG(IS_LINUX)
 LinuxFrameLayout* NativeWindowViews::GetLinuxFrameLayout() {
-  auto* view = views::AsViewClass<FramelessView>(
-      widget()->non_client_view()->frame_view());
+  auto* ncv = widget()->non_client_view();
+  if (!ncv)
+    return nullptr;
+  auto* view = views::AsViewClass<FramelessView>(ncv->frame_view());
   return view ? view->GetLinuxFrameLayout() : nullptr;
 }
 #endif
