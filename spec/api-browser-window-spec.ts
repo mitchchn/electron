@@ -1680,8 +1680,8 @@ describe('BrowserWindow module', () => {
           minHeight: 300
         });
         const size = w1.getSize();
-        expect(size[0]).to.be.at.least(300);
-        expect(size[1]).to.be.at.least(300);
+        expect(size[0]).to.equal(300);
+        expect(size[1]).to.equal(300);
       });
 
       it('creates window at max size when a larger size is requested', () => {

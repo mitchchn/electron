@@ -170,15 +170,17 @@ void NativeWindow::InitFromOptions(const gin_helper::Dictionary& options) {
     size_constraints.set_maximum_size(gfx::Size(max_width, max_height));
 
   if (use_content_size) {
-    SetContentSizeConstraints(size_constraints);
     gfx::Size clamped = size_constraints.ClampSize(GetContentSize());
-    if (clamped != GetContentSize())
+    if (clamped != GetContentSize()) {
       SetContentSize(clamped);
+    }
+    SetContentSizeConstraints(size_constraints);
   } else {
-    SetSizeConstraints(size_constraints);
     gfx::Size clamped = size_constraints.ClampSize(GetSize());
-    if (clamped != GetSize())
+    if (clamped != GetSize()) {
       SetSize(clamped);
+    }
+    SetSizeConstraints(size_constraints);
   }
 
   if (int x, y; options.Get(options::kX, &x) && options.Get(options::kY, &y)) {
