@@ -236,6 +236,7 @@ class NativeWindowViews : public NativeWindow,
   bool ExecuteWindowsCommand(int command_id) override;
   void HandleSizeEvent(WPARAM w_param, LPARAM l_param);
   void ResetWindowControls();
+  void UpdateWindowControlsOverlayButtons();
   void SetRoundedCorners(bool rounded);
   void SetForwardMouseMessages(bool forward);
   static LRESULT CALLBACK SubclassProc(HWND hwnd,

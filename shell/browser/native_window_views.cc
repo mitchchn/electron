@@ -977,6 +977,9 @@ void NativeWindowViews::SetResizable(bool resizable) {
       widget()->OnSizeConstraintsChanged();
 #elif BUILDFLAG(IS_WIN)
     UpdateThickFrame();
+    FlipWindowStyle(GetAcceleratedWidget(), maximizable_ && CanResize(),
+                    WS_MAXIMIZEBOX);
+    UpdateWindowControlsOverlayButtons();
 #endif
   }
 }
@@ -1064,11 +1067,7 @@ bool NativeWindowViews::IsMovable() const {
 void NativeWindowViews::SetMinimizable(bool minimizable) {
 #if BUILDFLAG(IS_WIN)
   FlipWindowStyle(GetAcceleratedWidget(), minimizable, WS_MINIMIZEBOX);
-  if (IsWindowControlsOverlayEnabled()) {
-    auto* frame_view =
-        static_cast<WinFrameView*>(widget()->non_client_view()->frame_view());
-    frame_view->caption_button_container()->UpdateButtons();
-  }
+  UpdateWindowControlsOverlayButtons();
 #endif
   minimizable_ = minimizable;
 }
@@ -1083,12 +1082,9 @@ bool NativeWindowViews::IsMinimizable() const {
 
 void NativeWindowViews::SetMaximizable(bool maximizable) {
 #if BUILDFLAG(IS_WIN)
-  FlipWindowStyle(GetAcceleratedWidget(), maximizable, WS_MAXIMIZEBOX);
-  if (IsWindowControlsOverlayEnabled()) {
-    auto* frame_view =
-        static_cast<WinFrameView*>(widget()->non_client_view()->frame_view());
-    frame_view->caption_button_container()->UpdateButtons();
-  }
+  FlipWindowStyle(GetAcceleratedWidget(), maximizable && CanResize(),
+                  WS_MAXIMIZEBOX);
+  UpdateWindowControlsOverlayButtons();
 #endif
   maximizable_ = maximizable;
 }
@@ -1122,11 +1118,7 @@ void NativeWindowViews::SetClosable(bool closable) {
   } else {
     EnableMenuItem(menu, SC_CLOSE, MF_BYCOMMAND | MF_DISABLED | MF_GRAYED);
   }
-  if (IsWindowControlsOverlayEnabled()) {
-    auto* frame_view =
-        static_cast<WinFrameView*>(widget()->non_client_view()->frame_view());
-    frame_view->caption_button_container()->UpdateButtons();
-  }
+  UpdateWindowControlsOverlayButtons();
 #endif
 }
 
@@ -1782,6 +1774,22 @@ void NativeWindowViews::SetIcon(const gfx::ImageSkia& icon) {
 #endif
 
 #if BUILDFLAG(IS_WIN)
+void NativeWindowViews::UpdateWindowControlsOverlayButtons() {
+  if (!IsWindowControlsOverlayEnabled())
+    return;
+
+  auto* const non_client_view = widget()->non_client_view();
+  if (!non_client_view)
+    return;
+
+  auto* const frame_view =
+      static_cast<WinFrameView*>(non_client_view->frame_view());
+  if (!frame_view)
+    return;
+
+  frame_view->caption_button_container()->UpdateButtons();
+}
+
 void NativeWindowViews::UpdateThickFrame() {
   if (!thick_frame_)
     return;
