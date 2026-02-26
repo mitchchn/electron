@@ -963,9 +963,11 @@ extensions::SizeConstraints NativeWindowViews::GetContentSizeConstraints()
 void NativeWindowViews::SetResizable(bool resizable) {
   if (resizable != resizable_) {
     resizable_ = resizable;
-#if BUILDFLAG(IS_LINUX)
     // On Linux there is no "resizable" property of a window, we have to set
     // both the minimum and maximum size to the window size to achieve it.
+    // On Windows, the constraints don't directly enforce resizability, but
+    // changing them triggers the styling to be applied in Chromium
+    // (SizeConstraintsChanged).
     if (resizable) {
       SetSizeConstraints(old_size_constraints_);
     } else {
@@ -975,7 +977,7 @@ void NativeWindowViews::SetResizable(bool resizable) {
     }
     if (widget() && widget()->widget_delegate())
       widget()->OnSizeConstraintsChanged();
-#elif BUILDFLAG(IS_WIN)
+#if BUILDFLAG(IS_WIN)
     UpdateThickFrame();
 #endif
   }

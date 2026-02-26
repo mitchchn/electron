@@ -5482,8 +5482,7 @@ describe('BrowserWindow module', () => {
         expect(w.maximizable).to.be.true('maximizable');
       });
 
-      // Linux controls resizability with min/max size constraints.
-      ifit(process.platform === 'linux')('does not change window size when disabled and enabled', () => {
+      it('does not change window size when disabled and enabled', () => {
         const w = new BrowserWindow({
           show: false,
           width: 400,
