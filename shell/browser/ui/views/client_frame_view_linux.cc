@@ -112,7 +112,7 @@ ClientFrameViewLinux::~ClientFrameViewLinux() {
 void ClientFrameViewLinux::Init(NativeWindowViews* window,
                                 views::Widget* frame) {
   FramelessView::Init(window, frame);
-  linux_frame_layout_ = std::make_unique<LinuxCSDFrameLayout>(window);
+  linux_frame_layout_ = std::make_unique<LinuxCSDNativeFrameLayout>(window);
 
   // Unretained() is safe because the subscription is saved into an instance
   // member and thus will be cancelled upon the instance's destruction.
