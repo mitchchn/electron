@@ -156,7 +156,8 @@ void ClientFrameViewLinux::OnWindowButtonOrderingChange() {
 }
 
 int ClientFrameViewLinux::ResizingBorderHitTest(const gfx::Point& point) {
-  return ResizingBorderHitTestImpl(point, RestoredFrameBorderInsets());
+  return ResizingBorderHitTestImpl(
+      point, linux_frame_layout_->GetResizeBorderInsets());
 }
 
 gfx::Rect ClientFrameViewLinux::GetBoundsForClientView() const {
@@ -235,8 +236,11 @@ void ClientFrameViewLinux::Layout(PassKey) {
 }
 
 void ClientFrameViewLinux::OnPaint(gfx::Canvas* canvas) {
-  linux_frame_layout_->PaintWindowFrame(
-      canvas, GetLocalBounds(), GetTitlebarBounds(), ShouldPaintAsActive());
+  if (auto* frame_provider = linux_frame_layout_->GetFrameProvider()) {
+    frame_provider->PaintWindowFrame(
+        canvas, GetLocalBounds(), GetTitlebarBounds().bottom(),
+        ShouldPaintAsActive(), linux_frame_layout_->GetInputInsets());
+  }
 }
 
 void ClientFrameViewLinux::PaintAsActiveChanged() {

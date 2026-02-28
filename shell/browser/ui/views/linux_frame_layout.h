@@ -14,7 +14,6 @@
 #include "shell/browser/ui/electron_desktop_window_tree_host_linux.h"
 #include "third_party/skia/include/core/SkRRect.h"
 #include "ui/base/ozone_buildflags.h"
-#include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/insets.h"
 #include "ui/linux/linux_ui.h"
 #include "ui/linux/window_frame_provider.h"
@@ -23,8 +22,8 @@ namespace electron {
 
 class NativeWindowViews;
 
-// Shared helper for CSD layout and frame painting on Linux (shadows, resize
-// regions, titlebars, etc.). Also helps views determine insets and perform
+// Shared helper for CSD layout on Linux (shadows, resize regions, titlebars,
+// etc.). Also helps views determine insets and perform
 // bounds conversions between widget and logical coordinates.
 class LinuxFrameLayout {
  public:
@@ -37,16 +36,13 @@ class LinuxFrameLayout {
   virtual gfx::Insets RestoredFrameBorderInsets() const = 0;
   // Insets for parts of the surface that should be counted for user input
   virtual gfx::Insets GetInputInsets() const = 0;
+  // Insets to use for non-client resize hit-testing.
+  gfx::Insets GetResizeBorderInsets() const;
 
   virtual bool SupportsClientFrameShadow() const = 0;
 
   virtual bool tiled() const = 0;
   virtual void set_tiled(bool tiled) = 0;
-
-  virtual void PaintWindowFrame(gfx::Canvas* canvas,
-                                gfx::Rect local_bounds,
-                                gfx::Rect titlebar_bounds,
-                                bool active) = 0;
 
   // The logical bounds of the window
   virtual gfx::Rect GetWindowContentBounds() const = 0;
@@ -69,10 +65,6 @@ class LinuxCSDFrameLayout : public LinuxFrameLayout {
   bool SupportsClientFrameShadow() const override;
   bool tiled() const override;
   void set_tiled(bool tiled) override;
-  void PaintWindowFrame(gfx::Canvas* canvas,
-                        gfx::Rect local_bounds,
-                        gfx::Rect titlebar_bounds,
-                        bool active) override;
   gfx::Rect GetWindowContentBounds() const override;
   SkRRect GetRoundedWindowContentBounds() const override;
   int GetTranslucentTopAreaHeight() const override;
@@ -88,7 +80,7 @@ class LinuxCSDFrameLayout : public LinuxFrameLayout {
 //
 // Intended for cases where we do not allocate a transparent inset area around
 // the window (e.g. X11 / server-side decorations, or when insets are disabled).
-// All inset math returns 0 and frame painting is skipped.
+// All inset math returns 0.
 class LinuxUndecoratedFrameLayout : public LinuxFrameLayout {
  public:
   explicit LinuxUndecoratedFrameLayout(NativeWindowViews* window);
@@ -99,10 +91,6 @@ class LinuxUndecoratedFrameLayout : public LinuxFrameLayout {
   bool SupportsClientFrameShadow() const override;
   bool tiled() const override;
   void set_tiled(bool tiled) override;
-  void PaintWindowFrame(gfx::Canvas* canvas,
-                        gfx::Rect local_bounds,
-                        gfx::Rect titlebar_bounds,
-                        bool active) override;
   gfx::Rect GetWindowContentBounds() const override;
   SkRRect GetRoundedWindowContentBounds() const override;
   int GetTranslucentTopAreaHeight() const override;

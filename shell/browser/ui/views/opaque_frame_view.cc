@@ -98,9 +98,8 @@ void OpaqueFrameView::Init(NativeWindowViews* window, views::Widget* frame) {
 }
 
 int OpaqueFrameView::ResizingBorderHitTest(const gfx::Point& point) {
-  auto insets = RestoredFrameBorderInsets();
   return ResizingBorderHitTestImpl(
-      point, insets.IsEmpty() ? linux_frame_layout_->GetInputInsets() : insets);
+      point, linux_frame_layout_->GetResizeBorderInsets());
 }
 
 void OpaqueFrameView::InvalidateCaptionButtons() {
@@ -205,9 +204,11 @@ void OpaqueFrameView::OnPaint(gfx::Canvas* canvas) {
   // ensure it's always positive even when insets are 0.
   int top_area_height = RestoredFrameBorderInsets().top() + 1;
 
-  linux_frame_layout_->PaintWindowFrame(
-      canvas, GetLocalBounds(), gfx::Rect(0, 0, width(), top_area_height),
-      ShouldPaintAsActive());
+  if (auto* frame_provider = linux_frame_layout_->GetFrameProvider()) {
+    frame_provider->PaintWindowFrame(canvas, GetLocalBounds(), top_area_height,
+                                     ShouldPaintAsActive(),
+                                     linux_frame_layout_->GetInputInsets());
+  }
 
   if (!window()->IsWindowControlsOverlayEnabled())
     return;

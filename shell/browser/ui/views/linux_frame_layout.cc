@@ -7,7 +7,6 @@
 #include "base/i18n/rtl.h"
 #include "shell/browser/native_window_views.h"
 #include "shell/browser/ui/electron_desktop_window_tree_host_linux.h"
-#include "ui/gfx/canvas.h"
 #include "ui/gfx/geometry/insets.h"
 #include "ui/gfx/geometry/skia_conversions.h"
 #include "ui/linux/linux_ui.h"
@@ -32,6 +31,11 @@ std::unique_ptr<LinuxFrameLayout> LinuxFrameLayout::Create(
   } else {
     return std::make_unique<LinuxCSDFrameLayout>(window);
   }
+}
+
+gfx::Insets LinuxFrameLayout::GetResizeBorderInsets() const {
+  gfx::Insets insets = RestoredFrameBorderInsets();
+  return insets.IsEmpty() ? GetInputInsets() : insets;
 }
 
 LinuxCSDFrameLayout::LinuxCSDFrameLayout(NativeWindowViews* window)
@@ -79,14 +83,6 @@ bool LinuxCSDFrameLayout::SupportsClientFrameShadow() const {
   return tree_host->SupportsClientFrameShadow();
 }
 
-void LinuxCSDFrameLayout::PaintWindowFrame(gfx::Canvas* canvas,
-                                           gfx::Rect local_bounds,
-                                           gfx::Rect titlebar_bounds,
-                                           bool active) {
-  GetFrameProvider()->PaintWindowFrame(
-      canvas, local_bounds, titlebar_bounds.bottom(), active, GetInputInsets());
-}
-
 gfx::Rect LinuxCSDFrameLayout::GetWindowContentBounds() const {
   gfx::Rect content_bounds = window_->widget()->GetWindowBoundsInScreen();
   content_bounds.Inset(RestoredFrameBorderInsets());
@@ -105,7 +101,6 @@ SkRRect LinuxCSDFrameLayout::GetRoundedWindowContentBounds() const {
   } else {
     rrect.setRect(rect);
   }
-
   return rrect;
 }
 
@@ -140,13 +135,6 @@ bool LinuxUndecoratedFrameLayout::tiled() const {
 
 void LinuxUndecoratedFrameLayout::set_tiled(bool tiled) {
   tiled_ = tiled;
-}
-
-void LinuxUndecoratedFrameLayout::PaintWindowFrame(gfx::Canvas* canvas,
-                                                   gfx::Rect local_bounds,
-                                                   gfx::Rect titlebar_bounds,
-                                                   bool active) {
-  // No-op
 }
 
 gfx::Rect LinuxUndecoratedFrameLayout::GetWindowContentBounds() const {
