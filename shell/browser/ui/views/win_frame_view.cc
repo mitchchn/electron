@@ -293,6 +293,28 @@ gfx::Size WinFrameView::GetMaximumSize() const {
   return size.IsEmpty() ? gfx::Size(INT_MAX, INT_MAX) : size;
 }
 
+int WinFrameView::ResizingBorderHitTest(const gfx::Point& point) {
+  if (window_->has_thick_frame()) {
+    // With WS_THICKFRAME, resize targets are past the frame edge except at top.
+    return ResizingBorderHitTestImpl(
+        point, gfx::Insets::TLBR(kResizeInsideBoundsSize, 0, 0, 0));
+  }
+  return FramelessView::ResizingBorderHitTest(point);
+}
+
+gfx::Insets WinFrameView::RestoredFrameBorderInsets() const {
+  if (!window_->has_thick_frame())
+    return {};
+
+  if (frame()->IsFullscreen() || IsMaximized() || !window_->IsResizable())
+    return {};
+
+  const int thickness =
+      display::win::GetScreenWin()->GetSystemMetricsInDIP(SM_CXSIZEFRAME) +
+      display::win::GetScreenWin()->GetSystemMetricsInDIP(SM_CXPADDEDBORDER);
+  return gfx::Insets::TLBR(0, thickness, thickness, thickness);
+}
+
 BEGIN_METADATA(WinFrameView)
 END_METADATA
 

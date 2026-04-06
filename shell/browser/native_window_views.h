@@ -198,6 +198,7 @@ class NativeWindowViews : public NativeWindow,
 
   SkColor overlay_button_color() const { return overlay_button_color_; }
   SkColor overlay_symbol_color() const { return overlay_symbol_color_; }
+  bool has_thick_frame() const { return thick_frame_; }
 
 #if BUILDFLAG(IS_LINUX)
   LinuxFrameLayout* GetLinuxFrameLayout();

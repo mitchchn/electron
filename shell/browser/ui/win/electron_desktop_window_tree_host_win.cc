@@ -92,21 +92,32 @@ bool ElectronDesktopWindowTreeHostWin::GetDwmFrameInsetsInPixels(
 bool ElectronDesktopWindowTreeHostWin::GetClientAreaInsets(
     gfx::Insets* insets,
     int frame_thickness) const {
-  // Windows by default extends the maximized window slightly larger than
-  // current workspace, for frameless window since the standard frame has been
-  // removed, the client area would then be drew outside current workspace.
-  //
-  // Indenting the client area can fix this behavior.
-  if (IsMaximized() && !native_window_view_->has_frame()) {
-    // The insets would be eventually passed to WM_NCCALCSIZE, which takes
-    // the metrics under the DPI of _main_ monitor instead of current monitor.
-    //
-    // Please make sure you tested maximized frameless window under multiple
-    // monitors with different DPIs before changing this code.
+  if (!native_window_view_->has_frame()) {
     const int thickness = ::GetSystemMetrics(SM_CXSIZEFRAME) +
                           ::GetSystemMetrics(SM_CXPADDEDBORDER);
-    *insets = gfx::Insets::TLBR(thickness, thickness, thickness, thickness);
-    return true;
+
+    if (IsMaximized()) {
+      // Windows by default extends the maximized window slightly larger than
+      // current workspace, for frameless window since the standard frame has
+      // been removed, the client area would then be drew outside current
+      // workspace.
+      //
+      // Indenting the client area can fix this behavior.
+      //
+      // The insets would be eventually passed to WM_NCCALCSIZE, which takes
+      // the metrics under the DPI of _main_ monitor instead of current monitor.
+      //
+      // Please make sure you tested maximized frameless window under multiple
+      // monitors with different DPIs before changing this code.
+      *insets = gfx::Insets::TLBR(thickness, thickness, thickness, thickness);
+      return true;
+    } else if (native_window_view_->has_thick_frame() &&
+               native_window_view_->IsResizable()) {
+      // Grow the insets to support resize targets past the frame edge like in
+      // windows with standard frames.
+      *insets = gfx::Insets::TLBR(0, thickness, thickness, thickness);
+      return true;
+    }
   }
   return false;
 }

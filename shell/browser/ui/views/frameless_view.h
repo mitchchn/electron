@@ -22,6 +22,8 @@ namespace electron {
 
 class NativeWindowViews;
 
+constexpr int kResizeInsideBoundsSize = 5;
+
 class FramelessView : public views::FrameView {
   METADATA_HEADER(FramelessView, views::FrameView)
 

@@ -440,11 +440,12 @@ NativeWindowViews::NativeWindowViews(const int32_t base_window_id,
   if (window)
     window->AddPreTargetHandler(this);
 
-#if BUILDFLAG(IS_LINUX)
+#if BUILDFLAG(IS_LINUX) || BUILDFLAG(IS_WIN)
   // We need to set bounds again after widget init for two reasons:
-  // 1. For CSD windows, user-specified bounds need  to be inflated by frame
-  //    insets, but the frame view isn't available at first.
-  // 2. The widget clamps bounds to fit the screen, but we want to allow
+  // 1. Windows may need to be inflated by insets provided by their frame views,
+  //    which weren't available on init.
+  // 2. (On Linux) the widget clamps bounds to fit the screen, but we want to
+  // allow
   //    windows larger than the display.
   SetBounds(gfx::Rect(GetPosition(), size), false);
 #endif
